@@ -1,0 +1,9 @@
+# Extraction prompt placeholder - Discovery mode (unconstrained prompting)
+# Copy the prompts.example/ directory to prompts/ and replace with your actual prompts
+# Expected JSON output fields:
+# - player_name (string)
+# - team_name (string)
+# - card_number (string)
+# - variant (string)
+# - condition (string)
+# - condition_notes (string)

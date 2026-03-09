@@ -1,0 +1,1 @@
+# Pydantic schemas for Job API request and response models

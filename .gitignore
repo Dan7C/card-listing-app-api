@@ -1,3 +1,10 @@
+# Proprietary prompts and config
+prompts/
+config/sets_config.json
+
+# Pipeline development outputs
+outputs/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

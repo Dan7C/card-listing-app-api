@@ -1,0 +1,20 @@
+{
+    "_comment": "Copy this file to config/sets_config.json and populate with your supported sets",
+    "manufacturers": {
+        "example_manufacturer": {
+            "display_name": "Example Manufacturer",
+            "sets": {
+                "example_set_key": {
+                    "display_name": "Example Set Name",
+                    "image_mode": "front_back",
+                    "set_type": "card",
+                    "known_variants": ["base", "holographic"],
+                    "prompt_template": "extraction_supported",
+                    "supported_subjects": ["player"],
+                    "card_subject_types": ["player", "team_badge"],
+                    "year": 2000
+                }
+            }
+        }
+    }
+}

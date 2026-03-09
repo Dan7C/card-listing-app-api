@@ -1,0 +1,1 @@
+# Health check endpoint - wakes Supabase on cold start

@@ -1,0 +1,1 @@
+# Loads prompt templates from the prompts/ directory at runtime

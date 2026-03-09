@@ -1,0 +1,8 @@
+# Classification prompt placeholder
+# Copy the prompts.example/ directory to prompts/ and replace with your actual prompts
+# Expected JSON output fields:
+# - manufacturer (string)
+# - set (string)
+# - face (string: "front" or "back")
+# - subject (string: "player", "team_badge", "trophy", "squad", "stadium", "manager", "other")
+# - contains_multiple_cards (boolean)

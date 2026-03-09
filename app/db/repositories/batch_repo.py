@@ -1,0 +1,1 @@
+# All database query logic for Batch records

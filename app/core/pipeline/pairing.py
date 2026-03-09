@@ -1,0 +1,1 @@
+# State machine logic for front/back image pairing

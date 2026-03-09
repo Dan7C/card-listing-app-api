@@ -1,0 +1,1 @@
+# Tests for front/back image pairing state machine

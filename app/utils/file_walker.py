@@ -1,0 +1,1 @@
+# Directory scanning with configurable depth control

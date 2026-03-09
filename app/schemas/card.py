@@ -1,0 +1,1 @@
+# Pydantic schemas for Card API request and response models
