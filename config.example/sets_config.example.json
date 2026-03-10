@@ -1,11 +1,12 @@
 {
     "_comment": "Copy this file to config/sets_config.json and populate with your supported sets",
     "manufacturers": {
-        "example_manufacturer": {
-            "display_name": "Example Manufacturer",
+        "example_manufacturer_1": {
+            "display_name": "Example Manufacturer 1",
             "sets": {
                 "example_set_key": {
                     "display_name": "Example Set Name",
+                    "aliases": ["Example Set 1", "Example_Set_1", "ExampleSet1"],
                     "image_mode": "front_back",
                     "set_type": "card",
                     "known_variants": ["base", "holographic"],

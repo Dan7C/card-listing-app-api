@@ -2,7 +2,7 @@
 AI-powered trading card listing generator. Processes card images through a tiered vision LLM pipeline to extract structured metadata, stores results in a Supabase PostgreSQL database, and generates e-commerce listings - all exposed via a FastAPI REST API designed for multiple client consumers. Desktop access via PySide6. Built with SQLAlchemy and Alembic.
 
 ## Related
-- [Card Llisting App - Desktop](https://github.com/dan7c/card-listing-app-desktop) — PySide6 desktop client
+- [Card Listing App - Desktop](https://github.com/dan7c/card-listing-app-desktop) — PySide6 desktop client
 
 ## Prerequisites
 - Python 3.14+
