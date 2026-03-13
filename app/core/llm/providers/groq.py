@@ -3,17 +3,19 @@
 import os
 import json
 import logging
+from datetime import datetime, timezone
 from groq import AsyncGroq
 from groq import RateLimitError, APIStatusError, APIConnectionError, APITimeoutError
+from groq.types.chat import ChatCompletion
 from dotenv import load_dotenv
 from app.core.llm.client import BaseLLMProvider, LLMProviderError
+from app.core.llm.rate_limit import RateLimitStatus, extract_groq_rate_limit
 from app.core.pipeline.results import ClassificationResult, ExtractionResult
 
 load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# Model selected for vision capability on Groq free tier
 GROQ_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
 
 
@@ -22,12 +24,17 @@ class GroqProvider(BaseLLMProvider):
     Groq implementation of BaseLLMProvider.
     Uses the AsyncGroq client to make vision API calls.
 
+    Maintains an in-memory rate limit status updated after every
+    API call. Access via provider.rate_limit_status.
+
     Catches all Groq SDK exceptions and re-raises as LLMProviderError
-    with HTTP status codes so LLMClient can apply the correct retry strategy.
+    with HTTP status codes so LLMClient can apply the correct retry
+    strategy.
     """
 
     def __init__(self):
         self.client = AsyncGroq(api_key=os.getenv("GROQ_API_KEY"))
+        self.rate_limit_status: RateLimitStatus | None = None
 
     async def classify(
         self,
@@ -37,7 +44,7 @@ class GroqProvider(BaseLLMProvider):
     ) -> ClassificationResult:
         """
         Sends a classification call to Groq.
-        Expects the prompt to instruct the model to respond in JSON.
+        Updates rate_limit_status from response headers.
 
         Args:
             front_image_b64: Base64 encoded front image
@@ -51,9 +58,9 @@ class GroqProvider(BaseLLMProvider):
             LLMProviderError with appropriate status code on failure
         """
         try:
-            response = await self.client.chat.completions.create(
+            response: ChatCompletion = await self.client.chat.completions.create(
                 model=GROQ_MODEL,
-                messages=[
+                messages=[  # type: ignore[arg-type]
                     {
                         "role": "user",
                         "content": [
@@ -63,6 +70,9 @@ class GroqProvider(BaseLLMProvider):
                     }
                 ]
             )
+
+            self._update_rate_limit(response)
+
             raw = response.choices[0].message.content
             logger.debug(f"Groq classify raw response: {raw}")
             return _parse_classification(raw)
@@ -89,8 +99,7 @@ class GroqProvider(BaseLLMProvider):
     ) -> ExtractionResult:
         """
         Sends an extraction call to Groq.
-        Includes back image if provided.
-        Expects the prompt to instruct the model to respond in JSON.
+        Updates rate_limit_status from response headers.
 
         Args:
             front_image_b64: Base64 encoded front image
@@ -112,15 +121,18 @@ class GroqProvider(BaseLLMProvider):
         content.append(_text_block(prompt))
 
         try:
-            response = await self.client.chat.completions.create(
+            response: ChatCompletion = await self.client.chat.completions.create(
                 model=GROQ_MODEL,
-                messages=[
+                messages=[  # type: ignore[arg-type]
                     {
                         "role": "user",
                         "content": content
                     }
                 ]
             )
+
+            self._update_rate_limit(response)
+
             raw = response.choices[0].message.content
             logger.debug(f"Groq extract raw response: {raw}")
             return _parse_extraction(raw)
@@ -138,11 +150,47 @@ class GroqProvider(BaseLLMProvider):
         except APIConnectionError as e:
             raise LLMProviderError(str(e), status_code=None)
 
+    def _update_rate_limit(self, response: ChatCompletion) -> None:
+        """
+        Extracts and stores rate limit status from a Groq API response.
+        Called after every successful API call.
+        Accesses headers via the underlying HTTPX response object.
+        Fails silently if headers are unavailable - rate limit tracking
+        is non-critical and should never crash the pipeline.
+        """
+        try:
+            headers = dict(response.http_response.headers)
+        except AttributeError:
+            logger.debug(
+                "Could not access response headers for rate limit update. "
+                "SDK structure may have changed."
+            )
+            return
+
+        status = extract_groq_rate_limit(
+            headers=headers,
+            last_updated=datetime.now(timezone.utc)
+        )
+
+        if status is not None:
+            self.rate_limit_status = status
+            logger.debug(f"Rate limit updated: {status}")
+
+            if status.is_exhausted:
+                logger.error(
+                    "Groq rate limit exhausted. "
+                    f"Resets at {status.reset_at}."
+                )
+            elif status.is_low:
+                logger.warning(
+                    f"Groq rate limit low: {status.remaining} requests "
+                    f"remaining. Resets at {status.reset_at}."
+                )
+
 
 def _image_block(image_b64: str, mime_type: str) -> dict:
     """
     Builds a Groq image content block from a base64 encoded image.
-    Uses the data URI format required by the Groq vision API.
     """
     return {
         "type": "image_url",
@@ -181,11 +229,12 @@ def _parse_classification(raw: str) -> ClassificationResult:
     into a ClassificationResult.
 
     Expected JSON fields:
-        manufacturer: str | null
-        set: str | null
-        face: "front" | "back" | null
-        subject: "player" | "team_badge" | "trophy" | "squad" |
-                 "stadium" | "manager" | "other" | null
+        manufacturer:           str | null
+        set:                    str | null
+        face:                   "front" | "back" | null
+        subject:                "player" | "team_badge" | "trophy" |
+                                "squad" | "stadium" | "manager" | "other"
+                                | null
         contains_multiple_cards: bool
 
     If parsing fails, returns a ClassificationResult with all fields
@@ -199,7 +248,9 @@ def _parse_classification(raw: str) -> ClassificationResult:
             set_name=data.get("set"),
             face=data.get("face"),
             subject=data.get("subject"),
-            contains_multiple_cards=data.get("contains_multiple_cards", False),
+            contains_multiple_cards=data.get(
+                "contains_multiple_cards", False
+            ),
             raw_response=raw
         )
     except Exception as e:
@@ -221,14 +272,14 @@ def _parse_extraction(raw: str) -> ExtractionResult:
     into an ExtractionResult.
 
     Expected JSON fields:
-        player_name: str | null
-        team_name: str | null
-        card_number: str | null
-        variant: str | null
-        condition: str | null
-        condition_notes: str | null
-        processing_mode: "supported" | "discovery"
-        confidence: "high" | "unverified"
+        player_name:      str | null
+        team_name:        str | null
+        card_number:      str | null
+        variant:          str | null
+        condition:        str | null
+        condition_notes:  str | null
+        processing_mode:  "supported" | "discovery"
+        confidence:       "high" | "unverified"
 
     If parsing fails, returns an ExtractionResult with all fields
     set to None and confidence set to "unverified".
