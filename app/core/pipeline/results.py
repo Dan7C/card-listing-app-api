@@ -81,10 +81,14 @@ class CardPair:
     """
     Represents a paired front and back image ready for extraction.
     Back image is optional - None indicates a front-only card.
+    orphaned_back_path is set when a back image could not be paired
+    and is routed to the review queue for manual pairing.
     """
     front_path: Path
     back_path: Path | None = None
     classification: ClassificationResult | None = None
+    is_pairing_disruption: bool = False
+    orphaned_back_path: Path | None = None
 
     @property
     def has_back(self) -> bool:
