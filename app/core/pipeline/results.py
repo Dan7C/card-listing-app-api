@@ -69,8 +69,12 @@ class ExtractionResult:
     team_name: str | None
     card_number: str | None
     variant: str | None
-    condition: str | None
+    condition_observations: list[str] | None
+    condition_recommendation: str | None
+    condition_confidence: str | None
     condition_notes: str | None
+    back_content_summary: str | None
+    subject: str | None
     processing_mode: str = ""           # "supported" or "discovery"
     raw_response: str = ""              # original LLM response for logging
     confidence: str = "unverified"      # "high" or "unverified"
