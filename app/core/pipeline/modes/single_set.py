@@ -24,6 +24,9 @@ import uuid
 import logging
 from pathlib import Path
 from datetime import datetime, timezone
+
+from sqlalchemy.testing.plugin.pytestplugin import setup_test_methods
+
 from app.core.llm.client import LLMClient, LLMClientError
 from app.core.llm.classification import classify_image, ClassificationError
 from app.core.llm.extraction import extract_supported, extract_discovery
@@ -454,13 +457,7 @@ def _resolve_set_context(
         if query:
             set_result = match_set_key(query, set_keys)
             if not set_result.failed:
-                from app.utils.fuzzy_match import _resolve_to_config_key
-                set_key = _resolve_to_config_key(
-                    set_result.matched_key,
-                    config.sets_config["manufacturers"][
-                        config.manufacturer_key
-                    ]["sets"]
-                )
+                set_key = set_result.matched_key
                 logger.info(
                     f"Set matched from '{query}': {set_key}"
                 )
