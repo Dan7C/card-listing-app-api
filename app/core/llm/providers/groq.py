@@ -272,14 +272,17 @@ def _parse_extraction(raw: str) -> ExtractionResult:
     into an ExtractionResult.
 
     Expected JSON fields:
-        player_name:      str | null
-        team_name:        str | null
-        card_number:      str | null
-        variant:          str | null
-        condition:        str | null
-        condition_notes:  str | null
-        processing_mode:  "supported" | "discovery"
-        confidence:       "high" | "unverified"
+        player_name:              str | null
+        team_name:                str | null
+        card_number:              str | null
+        variant:                  str | null
+        subject:                  "player" | "team_badge" | "trophy" |
+                                  "poster" | "mascot" | "manager" |
+                                  "other" | null
+        condition_observations:   list[str] | null
+        condition_recommendation: str | null
+        processing_mode:          "supported" | "discovery"
+        confidence:               "high" | "medium" | "medium_low" | "low"
 
     If parsing fails, returns an ExtractionResult with all fields
     set to None and confidence set to "unverified".
@@ -291,8 +294,9 @@ def _parse_extraction(raw: str) -> ExtractionResult:
             team_name=data.get("team_name"),
             card_number=data.get("card_number"),
             variant=data.get("variant"),
-            condition=data.get("condition"),
-            condition_notes=data.get("condition_notes"),
+            subject=data.get("subject"),
+            condition_observations=data.get("condition_observations"),
+            condition_recommendation=data.get("condition_recommendation"),
             processing_mode=data.get("processing_mode", ""),
             raw_response=raw,
             confidence=data.get("confidence", "unverified")
@@ -305,8 +309,9 @@ def _parse_extraction(raw: str) -> ExtractionResult:
             team_name=None,
             card_number=None,
             variant=None,
-            condition=None,
-            condition_notes=None,
+            subject=None,
+            condition_observations=None,
+            condition_recommendation=None,
             processing_mode="",
             raw_response=raw,
             confidence="unverified"
