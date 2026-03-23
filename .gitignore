@@ -1,6 +1,6 @@
 # Proprietary prompts and config
 prompts/
-config/sets_config.json
+config/manufacturers/
 
 # Pipeline development outputs
 outputs/

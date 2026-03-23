@@ -1,0 +1,16 @@
+{
+    "display_name": "Merlin 1998",
+    "aliases": ["merlin 1998", "merlin '98", "merlin98"],
+    "image_mode": "front_back",
+    "has_card_number": true,
+    "card_number_format": "NNN",
+    "card_number_range": "1-500",
+    "card_number_location_override": null,
+    "card_name_location_override": null,
+    "card_name_format_override": null,
+    "known_variants": ["base", "holographic"],
+    "subject_prompt_map": {},
+    "supported_subjects": ["player", "team_badge"],
+    "year": 1998,
+    "directory_name_hint": "merlin_1998"
+}

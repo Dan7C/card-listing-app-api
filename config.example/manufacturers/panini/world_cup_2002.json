@@ -1,0 +1,20 @@
+{
+    "display_name": "World Cup 2002",
+    "aliases": ["world cup 2002", "wc 2002", "panini world cup 2002"],
+    "image_mode": "front_back",
+    "has_card_number": false,
+    "card_number_format": null,
+    "card_number_range": null,
+    "card_number_location_override": null,
+    "card_name_location_override": "bottom of front, uppercase",
+    "card_name_format_override": "LASTNAME only",
+    "known_variants": ["base"],
+    "subject_prompt_map": {
+        "poster": "poster",
+        "mascot": "mascot",
+        "trophy": "trophy"
+    },
+    "supported_subjects": ["player", "team_badge", "poster", "mascot", "trophy"],
+    "year": 2002,
+    "directory_name_hint": "panini_wc_2002"
+}

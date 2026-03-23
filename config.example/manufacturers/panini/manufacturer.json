@@ -1,0 +1,12 @@
+{
+    "display_name": "Panini",
+    "aliases": ["panini"],
+    "prompt_layer": "panini",
+    "card_name_location": "bottom of front",
+    "card_name_format": "FIRSTNAME LASTNAME",
+    "card_number_location": "bottom right corner of front",
+    "subject_prompt_map": {
+        "player": "player_sticker",
+        "team_badge": "team_badge_sticker"
+    }
+}

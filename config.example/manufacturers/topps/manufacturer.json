@@ -1,0 +1,12 @@
+{
+    "display_name": "Topps",
+    "aliases": ["topps", "topps uk"],
+    "prompt_layer": "topps",
+    "card_name_location": "bottom centre of front",
+    "card_name_format": "FIRSTNAME LASTNAME",
+    "card_number_location": "bottom right corner of back",
+    "subject_prompt_map": {
+        "player": "player",
+        "team_badge": "team_badge"
+    }
+}
