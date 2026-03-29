@@ -98,7 +98,6 @@ def create_manufacturer():
 
     print(f"\n✓ Created manufacturer config for '{key}'")
     print(f"  config/manufacturers/{key}/manufacturer.json")
-    print(f"  config.example/manufacturers/{key}/manufacturer.json")
     print("\nNext: add sets using option 2.")
 
 
@@ -164,6 +163,12 @@ def create_set():
     card_number_range = None
     card_number_location_override = None
 
+    with open(CONFIG_DIR / manufacturer_key / "manufacturer.json") as f:
+        d = json.load(f)
+        manufacturer_card_number_location = d["card_number_location"]
+        manufacturer_card_name_location = d["card_name_location"]
+        manufacturer_card_name_format = d["card_number_format"]
+
     if has_card_number:
         card_number_format = _prompt(
             "Card number format (e.g. NNN / #NNN / NNN/TTT)",
@@ -175,22 +180,22 @@ def create_set():
             optional=True
         )
         card_number_location_override = _prompt(
-            "Card number location override (leave blank to inherit "
-            "from manufacturer)",
+            "Card number location override "
+            f"manufacturer default = {manufacturer_card_number_location}",
             default=None,
             optional=True
         )
 
     card_name_location_override = _prompt(
-        "Card name location override (leave blank to inherit "
-        "from manufacturer)",
+        "Card name location override "
+        f"manufacturer default = {manufacturer_card_name_location}",
         default=None,
         optional=True
     )
 
     card_name_format_override = _prompt(
-        "Card name format override (leave blank to inherit "
-        "from manufacturer)",
+        "Card name format override "
+        f"manufacturer default = {manufacturer_card_name_format}",
         default=None,
         optional=True
     )
@@ -251,9 +256,6 @@ def create_set():
     print(f"\n✓ Created set config for '{manufacturer_key}/{set_key}'")
     print(
         f"  config/manufacturers/{manufacturer_key}/{set_key}.json"
-    )
-    print(
-        f"  config.example/manufacturers/{manufacturer_key}/{set_key}.json"
     )
 
 
