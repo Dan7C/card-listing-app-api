@@ -42,7 +42,7 @@ CARD_NUMBER_FIELDS = {
 VALID_IMAGE_MODES = {"front_back", "front_only"}
 VALID_SUBJECTS = {
     "player", "team_badge", "trophy", "poster",
-    "mascot", "manager", "squad", "stadium", "other"
+    "mascot", "manager", "squad", "stadium", "checklist", "other"
 }
 
 
