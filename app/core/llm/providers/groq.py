@@ -290,7 +290,7 @@ def _parse_extraction(raw: str) -> ExtractionResult:
     try:
         data = _parse_json(raw)
         return ExtractionResult(
-            player_name=data.get("player_name"),
+            card_name=data.get("card_name"),
             team_name=data.get("team_name"),
             card_number=data.get("card_number"),
             variant=data.get("variant"),
@@ -305,7 +305,7 @@ def _parse_extraction(raw: str) -> ExtractionResult:
         logger.warning(f"Failed to parse extraction response: {e}")
         logger.debug(f"Raw response was: {raw}")
         return ExtractionResult(
-            player_name=None,
+            card_name=None,
             team_name=None,
             card_number=None,
             variant=None,

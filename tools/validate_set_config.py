@@ -41,8 +41,8 @@ CARD_NUMBER_FIELDS = {
 # valid values for constrained fields
 VALID_IMAGE_MODES = {"front_back", "front_only"}
 VALID_SUBJECTS = {
-    "player", "team_badge", "trophy", "poster",
-    "mascot", "manager", "squad", "stadium", "checklist", "other"
+    "player", "badge", "trophy", "poster",
+    "mascot", "programme", "squad", "checklist", "other"
 }
 
 

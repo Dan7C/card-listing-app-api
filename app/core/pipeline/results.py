@@ -34,7 +34,7 @@ class ClassificationResult:
     manufacturer: str | None
     set_name: str | None
     face: str | None                    # "front" or "back"
-    subject: str | None                 # "player", "team_badge" etc.
+    subject: str | None                 # "player", "badge" etc.
     contains_multiple_cards: bool = False
     raw_response: str = ""              # original LLM response for logging
 
@@ -65,7 +65,7 @@ class ExtractionResult:
     Represents the output of an extraction API call (Call 2 or 3).
     Produced by app/core/llm/extraction.py.
     """
-    player_name: str | None
+    card_name: str | None
     team_name: str | None
     card_number: str | None
     variant: str | None
